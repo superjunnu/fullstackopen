@@ -10,7 +10,7 @@ Note right of browser: Selain lähettää lomakkeelle syötetyn datan palvelimel
     activate server
     server-->>browser: Palvelin vastaa pyyntöön HTTP-statuskoodilla 302
 
-Note right of browser: Kyseessä on ns. uudelleenohjauspyyntö eli redirectaus, jonka avulla palvelin kehottaa selainta tekemään automaattisesti uuden HTTP GET‑pyynnön osoitteeseen /notes
+Note right of browser: Kyseessä on ns. uudelleenohjauspyyntö eli redirectaus, jonka avulla palvelin kehottaa selainta tekemään automaattisesti uuden HTTP GET pyynnön osoitteeseen /notes
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
     activate server
