@@ -5,7 +5,7 @@ sequenceDiagram
     
     browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/notes/new_note
 
-Note right of browser: Selain lähettää lomakkeelle syötetyn datan palvelimelle ja aiheuttaa lomakkeen lähetyksen lisäksi neljä HTTP-pyyntöä
+Note right of browser: Selain lähettää lomakkeelle syötetyn datan palvelimelle osoitteeseen /new_note ja aiheuttaa lomakkeen lähetyksen lisäksi neljä HTTP-pyyntöä
 
     activate server
     server-->>browser: Palvelin vastaa pyyntöön HTTP-statuskoodilla 302
@@ -21,6 +21,7 @@ Note right of browser: Kyseessä on ns. uudelleenohjauspyyntö eli redirectaus, 
     server-->>browser: Palvelin lähettää https://studies.cs.helsinki.fi/exampleapp/main.css, main.js sekä muistiinpanojen raakadatan data.json
  
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
+Note right of browser: Selain alkaa suorittamaan hakemaansa JavaScript-koodia, joka tekee HTTP Get pyynnön data.json osoitteeseen
     activate server
     server-->>browser: Muistiinpanot palautetaan JSON-muotoisena raakadatana
      
