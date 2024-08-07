@@ -16,7 +16,7 @@ Note right of browser: Kyseessä on ns. uudelleenohjauspyyntö eli redirectaus, 
     activate server
     server-->>browser: Selain lataa uudelleen muistiinpanojen sivun
     
-    browser->>server: Sivunlataus saa aikaan kolme muuta GET HTTP-pyyntöä
+    browser->>server: Sivunlataus saa aikaan kolme muuta HTTP GET pyyntöä
     activate server
     server-->>browser: Palvelin lähettää https://studies.cs.helsinki.fi/exampleapp/main.css, main.js sekä muistiinpanojen raakadatan data.json
  
