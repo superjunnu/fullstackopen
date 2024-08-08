@@ -18,7 +18,7 @@ sequenceDiagram
     palvelin-->>selain: JavaScript file
 
     
-    Note right of selain: Selain hoitaa tehtävän suorittamalla palvelimelta lataamansa JavaScript-koodin
+    Note right of selain: Selain hoitaa olemassa olevien muistiinpanojen HTML-generoinnin suorittamalla palvelimelta lataamansa JavaScript-koodin
     
     selain->>palvelin: GET https://studies.cs.helsinki.fi/exampleapp/data.json
     activate palvelin
