@@ -1,7 +1,7 @@
 ```mermaid
 sequenceDiagram
-    participant browser
-    participant server
+    participant Selain
+    participant Palvelin
     
     browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/notes/new_note
 
