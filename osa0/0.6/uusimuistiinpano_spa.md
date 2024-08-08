@@ -12,8 +12,9 @@ Note right of selain: Selain lähettää ainoastaan yhden HTTP pyynnön palvelim
 
 Note right of selain: Tällä kertaa palvelin ei pyydä uudelleenohjausta vaan selain pysyy samalla sivulla eikä muita HTTP pyyntöjä suoriteta
     
-    selain->>palvelin: GET https://studies.cs.helsinki.fi/exampleapp/spa.js
-    palvelin-->>selain: Uuden muistiinpanon lähetyksen ja luomisen hoitaa selaimen lataamassa JavaScript-tiedostossa (spa.js) määritelty koodi.
+ 
+    palvelin-->>selain: Uuden muistiinpanon lähetyksen ja luomisen hoitaa selaimen lataamassa JavaScript-tiedostossa (spa.js) määritelty koodi
+    selain->>palvelin: Määritelty koodi piirtää muistiinpanojen listan uudelleen ja lähettää uuden muistiinpanon palvelimelle
 
 Note right of selain: Lomakkeen tietoja ei siis lähetetä normaalin lomakkeiden lähetysmekanismin avulla kuten perinteisemmässä versiossa. 
 
