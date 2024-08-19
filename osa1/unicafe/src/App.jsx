@@ -11,7 +11,7 @@ const Button = ({ handleClick, text }) => {
 const RenderText = ({ text, value }) => {
   return (
     <div>
-      {text} {value}
+      {text} {value === 0 || Number.isNaN(value) ? "" : value}
     </div>
   );
 };
@@ -44,6 +44,11 @@ function App() {
       <RenderText text="good" value={good} />
       <RenderText text="neutral" value={neutral} />
       <RenderText text="bad" value={bad} />
+      <RenderText text="all" value={(good - bad) / (good + neutral + bad)} />
+      <RenderText
+        text="positive"
+        value={(good * 100) / (good + neutral + bad)}
+      />
     </>
   );
 }
