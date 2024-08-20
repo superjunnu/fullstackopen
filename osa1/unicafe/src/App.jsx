@@ -8,10 +8,31 @@ const Button = ({ handleClick, text }) => {
   return <button onClick={handleClick}>{text}</button>;
 };
 
-const RenderText = ({ text, value }) => {
+const StatisticsLine = ({ text, value }) => {
   return (
     <div>
-      {text} {value === 0 || Number.isNaN(value) ? "" : value}
+      {text} {value}
+    </div>
+  );
+};
+
+const Statistics = ({ good, neutral, bad }) => {
+  if (!(good || neutral || bad)) return <div>No feedback given</div>;
+
+  return (
+    <div>
+      <StatisticsLine text="good" value={good} />
+      <StatisticsLine text="neutral" value={neutral} />
+      <StatisticsLine text="bad" value={bad} />
+      <StatisticsLine text="all" value={good + neutral + bad} />
+      <StatisticsLine
+        text="average"
+        value={(good - bad) / (good + neutral + bad)}
+      />
+      <StatisticsLine
+        text="positive"
+        value={(good * 100) / (good + neutral + bad) + " %"}
+      />
     </div>
   );
 };
@@ -41,14 +62,7 @@ function App() {
       <Button handleClick={neutralBtnClicked} text="Neutral" />
       <Button handleClick={badBtnClicked} text="Bad" />
       <Header title="Statistics" />
-      <RenderText text="good" value={good} />
-      <RenderText text="neutral" value={neutral} />
-      <RenderText text="bad" value={bad} />
-      <RenderText text="all" value={(good - bad) / (good + neutral + bad)} />
-      <RenderText
-        text="positive"
-        value={(good * 100) / (good + neutral + bad)}
-      />
+      <Statistics good={good} neutral={neutral} bad={bad} />
     </>
   );
 }
