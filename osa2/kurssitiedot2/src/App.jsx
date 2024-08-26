@@ -19,11 +19,26 @@ const Part = ({ part }) => {
   );
 };
 
+const Total = (props) => {
+  const allExercisesArr = props.parts.flatMap((course) => course.exercises);
+
+  const totalOfExercises = allExercisesArr.reduce(
+    (firstExercise, nextExercise) => firstExercise + nextExercise
+  );
+
+  return (
+    <p>
+      <b>Total of {totalOfExercises} exercises</b>
+    </p>
+  );
+};
+
 const Course = ({ course }) => {
   return (
     <div>
       <Header course={course} />
       <Content parts={course.parts} />
+      <Total parts={course.parts} />
     </div>
   );
 };
@@ -47,6 +62,11 @@ const App = () => {
         name: "State of a component",
         exercises: 14,
         id: 3,
+      },
+      {
+        name: "Redux",
+        exercises: 11,
+        id: 4,
       },
     ],
   };
