@@ -7,11 +7,18 @@ const App = () => {
   const addNewName = (event) => {
     event.preventDefault();
 
+    const personsCopy = [...persons];
     const newNameObject = {
       name: newName,
     };
 
-    const personsCopy = [...persons];
+    const checkName = personsCopy.find((person) => person.name === newName);
+
+    if (checkName) {
+      alert(`${newName} is already added to phonebook`);
+      setNewName("");
+      return;
+    }
 
     setPersons(personsCopy.concat(newNameObject));
     setNewName("");
