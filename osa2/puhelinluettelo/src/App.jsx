@@ -53,11 +53,17 @@ const App = () => {
   const [filteredPersons, setFilteredPersons] = useState(persons);
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      console.log(response.data);
+    axios
+      .get("http://localhost:3001/persons")
+      .then((response) => {
+        console.log(response.data);
 
-      setFilteredPersons(response.data);
-    });
+        setPersons(response.data);
+        setFilteredPersons(response.data);
+      })
+      .catch((error) => {
+        console.error(`Error getting data: ${error}`);
+      });
   }, []);
 
   const addNewName = (event) => {
@@ -71,6 +77,19 @@ const App = () => {
       number: newNumber,
     };
 
+    axios
+      .post("http://localhost:3001/persons", newNameObject)
+      .then((response) => {
+        console.log(response);
+
+        const addNewPerson = persons.concat(response.data);
+
+        setPersons(addNewPerson);
+        setFilteredPersons(addNewPerson);
+        setNewName("");
+        setNewNumber("");
+      });
+
     const checkName = persons.find(
       (person) => person.name === CapitalizeNewName
     );
@@ -83,13 +102,6 @@ const App = () => {
       setNewNumber("");
       return;
     }
-
-    const addNewPerson = persons.concat(newNameObject);
-
-    setPersons(addNewPerson);
-    setFilteredPersons(addNewPerson);
-    setNewName("");
-    setNewNumber("");
   };
 
   const handleNewNameChange = (event) => {
