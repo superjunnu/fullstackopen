@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
+import contactsService from "./services/contacts";
 
 const Persons = ({ filteredPersons }) => {
   return (
@@ -53,13 +54,13 @@ const App = () => {
   const [filteredPersons, setFilteredPersons] = useState(persons);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then((response) => {
-        console.log(response.data);
+    contactsService
+      .getAll("http://localhost:3001/persons")
+      .then((AllContacts) => {
+        console.log("Alkudata: ", AllContacts);
 
-        setPersons(response.data);
-        setFilteredPersons(response.data);
+        setPersons(AllContacts);
+        setFilteredPersons(AllContacts);
       })
       .catch((error) => {
         console.error(`Error getting data: ${error}`);
@@ -69,35 +70,38 @@ const App = () => {
   const addNewName = (event) => {
     event.preventDefault();
 
-    const CapitalizeNewName =
+    const CapitalizeNewNameFirstLetter =
       newName.charAt(0).toUpperCase() + newName.slice(1);
 
     const newNameObject = {
-      name: CapitalizeNewName,
+      name: CapitalizeNewNameFirstLetter,
       number: newNumber,
     };
 
-    axios
-      .post("http://localhost:3001/persons", newNameObject)
-      .then((response) => {
-        console.log(response);
+    contactsService
+      .create(newNameObject)
+      .then((newContact) => {
+        console.log("Muuttunut data: ", newContact);
 
-        const addNewPerson = persons.concat(response.data);
+        const addNewPerson = persons.concat(newContact);
 
         setPersons(addNewPerson);
         setFilteredPersons(addNewPerson);
         setNewName("");
         setNewNumber("");
+      })
+      .catch((error) => {
+        console.error(`Error getting data: ${error}`);
       });
 
     const checkName = persons.find(
-      (person) => person.name === CapitalizeNewName
+      (person) => person.name === CapitalizeNewNameFirstLetter
     );
 
-    if (CapitalizeNewName.length === 0) return;
+    if (CapitalizeNewNameFirstLetter.length === 0) return;
 
     if (checkName) {
-      alert(`${CapitalizeNewName} is already added to phonebook`);
+      alert(`${CapitalizeNewNameFirstLetter} is already added to phonebook`);
       setNewName("");
       setNewNumber("");
       return;
