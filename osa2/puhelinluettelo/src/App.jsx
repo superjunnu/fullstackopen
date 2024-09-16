@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-// import axios from "axios";
 import contactsService from "./services/contacts";
 
-const Persons = ({ filteredPersons }) => {
+const Persons = ({ filteredPersons, removePerson }) => {
   return (
     <div>
       {filteredPersons.map((person) => (
-        <div key={person.name}>
+        <div key={person.id}>
           {person.name} {person.number}
+          <button onClick={() => removePerson(person.id)}>Delete</button>
         </div>
       ))}
     </div>
@@ -55,7 +55,7 @@ const App = () => {
 
   useEffect(() => {
     contactsService
-      .getAll("http://localhost:3001/persons")
+      .getAll()
       .then((AllContacts) => {
         console.log("Alkudata: ", AllContacts);
 
@@ -81,8 +81,6 @@ const App = () => {
     contactsService
       .create(newNameObject)
       .then((newContact) => {
-        console.log("Muuttunut data: ", newContact);
-
         const addNewPerson = persons.concat(newContact);
 
         setPersons(addNewPerson);
@@ -128,6 +126,25 @@ const App = () => {
     setFilteredPersons(filterPerson);
   };
 
+  const removePerson = (id) => {
+    const targetPerson = persons.find((person) => person.id === id);
+    const confirmRemove = window.confirm(`Delete ${targetPerson.name}?`);
+
+    if (confirmRemove) {
+      contactsService
+        .remove(id)
+        .then(() => {
+          setPersons(persons.filter((person) => person.id != id));
+          setFilteredPersons(
+            filteredPersons.filter((person) => person.id != id)
+          );
+        })
+        .catch((error) => {
+          console.error(`Error removing person: ${error.message}`);
+        });
+    }
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -141,7 +158,7 @@ const App = () => {
         handleNewNumberChange={handleNewNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons filteredPersons={filteredPersons} />
+      <Persons filteredPersons={filteredPersons} removePerson={removePerson} />
     </div>
   );
 };

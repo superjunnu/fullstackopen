@@ -23,4 +23,11 @@ const update = (id, newNameObject) => {
   return request.then((response) => response.data);
 };
 
-export default { getAll, create, update };
+// Poistaa olemassaolevan tiedon JSON serveriltä
+
+const remove = (id, newNameObject) => {
+  const request = axios.delete(`${baseURL}/${id}`, newNameObject);
+  return request.then((response) => response.data);
+};
+
+export default { getAll, create, update, remove };
