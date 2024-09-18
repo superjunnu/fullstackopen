@@ -70,39 +70,61 @@ const App = () => {
   const addNewName = (event) => {
     event.preventDefault();
 
-    const CapitalizeNewNameFirstLetter =
-      newName.charAt(0).toUpperCase() + newName.slice(1);
-
     const newNameObject = {
-      name: CapitalizeNewNameFirstLetter,
+      name: newName,
       number: newNumber,
     };
 
-    contactsService
-      .create(newNameObject)
-      .then((newContact) => {
-        const addNewPerson = persons.concat(newContact);
-
-        setPersons(addNewPerson);
-        setFilteredPersons(addNewPerson);
-        setNewName("");
-        setNewNumber("");
-      })
-      .catch((error) => {
-        console.error(`Error getting data: ${error}`);
-      });
+    if (newName.trim() === "") {
+      return;
+    }
 
     const checkName = persons.find(
-      (person) => person.name === CapitalizeNewNameFirstLetter
+      (person) => person.name.toLowerCase() === newName.toLowerCase()
     );
 
-    if (CapitalizeNewNameFirstLetter.length === 0) return;
-
     if (checkName) {
-      alert(`${CapitalizeNewNameFirstLetter} is already added to phonebook`);
+      const confirmName = window.confirm(
+        `${checkName.name} is already added to phonebook, replace the old number with a new one?`
+      );
+      if (!confirmName) {
+        setNewName("");
+        setNewNumber("");
+        return;
+      }
+
+      contactsService
+        .update(checkName.id, newNameObject)
+        .then((updatePerson) => {
+          setPersons(
+            persons.map((person) =>
+              person.id === checkName.id ? updatePerson : person
+            )
+          );
+          setFilteredPersons(
+            persons.map((person) =>
+              person.id === checkName.id ? updatePerson : person
+            )
+          );
+        });
+
       setNewName("");
       setNewNumber("");
       return;
+    } else {
+      contactsService
+        .create(newNameObject)
+        .then((newContact) => {
+          const addNewPerson = persons.concat(newContact);
+
+          setPersons(addNewPerson);
+          setFilteredPersons(addNewPerson);
+          setNewName("");
+          setNewNumber("");
+        })
+        .catch((error) => {
+          console.error(`Error getting data: ${error}`);
+        });
     }
   };
 
