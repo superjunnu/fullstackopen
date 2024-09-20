@@ -57,21 +57,31 @@ const Notification = ({ message }) => {
     marginBottom: 10,
   };
 
-  if (message === null) {
-    return null;
-  }
   const messageTypes = {
     add: { ...MessageStyle, color: "green" },
     update: { ...MessageStyle, color: "orange" },
     remove: { ...MessageStyle, color: "violet" },
+    error: { ...MessageStyle, color: "red" },
   };
 
-  if (message.includes("Added"))
+  if (message === null) {
+    return null;
+  }
+
+  if (message.includes("Added")) {
     return <div style={messageTypes.add}>{message}</div>;
-  if (message.includes("Updated"))
+  }
+  if (message.includes("Updated")) {
     return <div style={messageTypes.update}>{message}</div>;
-  if (message.includes("Removed"))
+  }
+  if (message.includes("Deleted")) {
     return <div style={messageTypes.remove}>{message}</div>;
+  }
+  if (message.includes("Information")) {
+    return <div style={messageTypes.error}>{message}</div>;
+  }
+
+  return <div>{message}</div>;
 };
 
 const App = () => {
@@ -96,8 +106,8 @@ const App = () => {
       });
   }, []);
 
-  const displayNotificationMessage = (text, person) => {
-    setNotificationMessage(`${text} ${person.name}`);
+  const displayNotificationMessage = (person) => {
+    setNotificationMessage(person);
     setTimeout(() => {
       setNotificationMessage(null);
     }, 5000);
@@ -142,7 +152,7 @@ const App = () => {
               person.id === checkName.id ? updatePerson : person
             )
           );
-          displayNotificationMessage("Updated", updatePerson);
+          displayNotificationMessage(`Updated ${updatePerson.name}`);
         });
 
       setNewName("");
@@ -158,7 +168,7 @@ const App = () => {
           setFilteredPersons(addNewPerson);
           setNewName("");
           setNewNumber("");
-          displayNotificationMessage("Added", newContact);
+          displayNotificationMessage(`Added ${newContact.name}`);
         })
         .catch((error) => {
           console.log(error);
@@ -198,10 +208,12 @@ const App = () => {
           setFilteredPersons(
             filteredPersons.filter((person) => person.id != id)
           );
-          displayNotificationMessage("Removed", targetPerson);
+          displayNotificationMessage(`Deleted ${targetPerson.name}`);
         })
         .catch((error) => {
-          console.error(`Error removing person: ${error.message}`);
+          displayNotificationMessage(
+            `Information of ${targetPerson.name} has already been removed from server`
+          );
         });
     }
   };
