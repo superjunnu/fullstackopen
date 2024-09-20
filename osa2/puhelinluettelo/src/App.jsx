@@ -46,12 +46,41 @@ const Filter = ({ searchName, handleSearchName }) => {
   );
 };
 
+const Notification = ({ message }) => {
+  const MessageStyle = {
+    color: "green",
+    background: "lightgrey",
+    fontSize: 20,
+    borderStyle: "solid",
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  };
+
+  if (message === null) {
+    return null;
+  }
+  const messageTypes = {
+    add: { ...MessageStyle, color: "green" },
+    update: { ...MessageStyle, color: "orange" },
+    remove: { ...MessageStyle, color: "violet" },
+  };
+
+  if (message.includes("Added"))
+    return <div style={messageTypes.add}>{message}</div>;
+  if (message.includes("Updated"))
+    return <div style={messageTypes.update}>{message}</div>;
+  if (message.includes("Removed"))
+    return <div style={messageTypes.remove}>{message}</div>;
+};
+
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchName, setSearchName] = useState("");
   const [filteredPersons, setFilteredPersons] = useState(persons);
+  const [notificationMessage, setNotificationMessage] = useState("");
 
   useEffect(() => {
     contactsService
@@ -66,6 +95,13 @@ const App = () => {
         console.error(`Error getting data: ${error}`);
       });
   }, []);
+
+  const displayNotificationMessage = (text, person) => {
+    setNotificationMessage(`${text} ${person.name}`);
+    setTimeout(() => {
+      setNotificationMessage(null);
+    }, 5000);
+  };
 
   const addNewName = (event) => {
     event.preventDefault();
@@ -106,6 +142,7 @@ const App = () => {
               person.id === checkName.id ? updatePerson : person
             )
           );
+          displayNotificationMessage("Updated", updatePerson);
         });
 
       setNewName("");
@@ -121,9 +158,10 @@ const App = () => {
           setFilteredPersons(addNewPerson);
           setNewName("");
           setNewNumber("");
+          displayNotificationMessage("Added", newContact);
         })
         .catch((error) => {
-          console.error(`Error getting data: ${error}`);
+          console.log(error);
         });
     }
   };
@@ -160,6 +198,7 @@ const App = () => {
           setFilteredPersons(
             filteredPersons.filter((person) => person.id != id)
           );
+          displayNotificationMessage("Removed", targetPerson);
         })
         .catch((error) => {
           console.error(`Error removing person: ${error.message}`);
@@ -170,6 +209,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage} />
       <Filter handleSearchName={handleSearchName} searchName={searchName} />
       <h2>Add a new</h2>
       <PersonForm
