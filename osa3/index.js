@@ -5,26 +5,26 @@ const PORT = 3001;
 app.use(express.json());
 
 let persons = [
-  // {
-  //   id: 1,
-  //   name: "Arto Hellas",
-  //   number: "040-123456",
-  // },
-  // {
-  //   id: 2,
-  //   name: "Ada Lovelace",
-  //   number: "39-44-5323523",
-  // },
-  // {
-  //   id: 3,
-  //   name: "Dan Abramov",
-  //   number: "12-43-234345",
-  // },
-  // {
-  //   id: 4,
-  //   name: "Mary Poppendieck",
-  //   number: "39-23-6423122",
-  // },
+  {
+    id: 1,
+    name: "Arto Hellas",
+    number: "040-123456",
+  },
+  {
+    id: 2,
+    name: "Ada Lovelace",
+    number: "39-44-5323523",
+  },
+  {
+    id: 3,
+    name: "Dan Abramov",
+    number: "12-43-234345",
+  },
+  {
+    id: 4,
+    name: "Mary Poppendieck",
+    number: "39-23-6423122",
+  },
 ];
 
 app.get("/", (request, response) => {
@@ -59,6 +59,8 @@ app.get("/info", (request, response) => {
     ${today}`);
 });
 
+// Generates random id for each new entry
+
 const generateId = () => {
   const randomId = Math.trunc(Math.random() * Date.now());
 
@@ -66,8 +68,17 @@ const generateId = () => {
   return addId;
 };
 
+// Adds new person if entry passes some validation testing
+
 app.post("/api/persons", (request, response) => {
   const body = request.body;
+
+  if (!body.name) {
+    return response.status(400).json({ error: "Name missing" });
+  }
+  if (!body.number) {
+    return response.status(400).json({ error: "Number missing" });
+  }
 
   const person = {
     id: generateId(),
@@ -75,11 +86,17 @@ app.post("/api/persons", (request, response) => {
     number: body.number,
   };
 
-  persons = persons.concat(person);
+  const checkName = persons.map((person) => person.name.toLowerCase());
 
-  console.log(person);
+  if (checkName.includes(person.name.toLowerCase())) {
+    return response.status(400).json({ error: "Person already exists" });
+  } else {
+    persons = persons.concat(person);
 
-  response.json(person);
+    console.log(person);
+
+    response.json(person);
+  }
 });
 
 app.listen(PORT, () => {
