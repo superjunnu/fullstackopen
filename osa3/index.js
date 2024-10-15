@@ -30,15 +30,21 @@ let persons = [
   },
 ];
 
+// Sovelluksen polku
+
 app.get("/", (request, response) => {
   response.send(
     `Go to <a href="http://localhost:${PORT}/api/persons">http://localhost:${PORT}/api/persons</a>`
   );
 });
 
+// Hakee kaikki sen hetken henkilöt
+
 app.get("/api/persons", (request, response) => {
   response.json(persons);
 });
+
+// Hakee henkilön ID:n avulla
 
 app.get("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
@@ -46,6 +52,8 @@ app.get("/api/persons/:id", (request, response) => {
 
   person ? response.json(person) : response.status(404).end();
 });
+
+// Poistaa henkilön ID:n perusteella
 
 app.delete("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
@@ -62,7 +70,7 @@ app.get("/info", (request, response) => {
     ${today}`);
 });
 
-// Generates random id for each new entry
+// Luo random ID lisättävälle henkilölle
 
 const generateId = () => {
   const randomId = Math.trunc(Math.random() * Date.now());
@@ -71,7 +79,21 @@ const generateId = () => {
   return addId;
 };
 
-// Adds new person if entry passes some validation testing
+// Luodaan token POST-tietoa varten
+
+morgan.token("request-body", (request, response) => {
+  return JSON.stringify(request.body);
+});
+
+// Luodaan Middleware custom versiona tiedon loggausta varten
+
+app.use(
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms :request-body"
+  )
+);
+
+// Lisää uuden henkilön jos tietyt ehdot täyttyvät
 
 app.post("/api/persons", (request, response) => {
   const body = request.body;
@@ -83,11 +105,15 @@ app.post("/api/persons", (request, response) => {
     return response.status(400).json({ error: "Number missing" });
   }
 
+  // Uusi luotava henkilö olio
+
   const person = {
     id: generateId(),
     name: body.name,
     number: body.number,
   };
+
+  // Muuttaa nimet vertailua varten ja suorittaa tarkastuksen
 
   const checkName = persons.map((person) => person.name.toLowerCase());
 
@@ -95,8 +121,6 @@ app.post("/api/persons", (request, response) => {
     return response.status(400).json({ error: "Person already exists" });
   } else {
     persons = persons.concat(person);
-
-    console.log(person);
 
     response.json(person);
   }
