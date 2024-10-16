@@ -36,7 +36,8 @@ let persons = [
 app.get("/", (request, response) => {
   response.send(
     // `Go to <a href="http://localhost:${PORT}/api/persons">http://localhost:${PORT}/api/persons</a>`
-    `Go to <a href="https://fullstackopen-6myz.onrender.com/api/persons">https://fullstackopen-6myz.onrender.com</a>`
+    `Go to <a href="https://fullstackopen-6myz.onrender.com/info">Info</a><br>
+    Go to <a href="https://fullstackopen-6myz.onrender.com/api/persons">Persons</a>`
   );
 });
 
