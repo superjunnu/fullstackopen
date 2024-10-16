@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const baseURL = "http://localhost:3001/persons";
+// const baseURL = "http://localhost:3001/persons";
+const baseURL = "http://localhost:3001/api/persons";
 
 // Hakee kaikki olemassaolevat tiedot JSON serveriltä
 
