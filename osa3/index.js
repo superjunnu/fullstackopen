@@ -32,16 +32,6 @@ let persons = [
   },
 ];
 
-// Sovelluksen polku
-
-// app.get("/", (request, response) => {
-//   response.send(
-//     // `Go to <a href="http://localhost:${PORT}/api/persons">http://localhost:${PORT}/api/persons</a>`
-//     `Go to <a href="https://fullstackopen-6myz.onrender.com/info">Info</a><br>
-//     Go to <a href="https://fullstackopen-6myz.onrender.com/api/persons">Persons</a>`
-//   );
-// });
-
 // Hakee kaikki sen hetken henkilöt
 
 app.get("/api/persons", (request, response) => {
