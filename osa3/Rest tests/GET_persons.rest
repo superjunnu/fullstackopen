@@ -1,1 +1,1 @@
-GET http://localhost:3001/api/persons
+GET https://fullstackopen-6myz.onrender.com/api/persons

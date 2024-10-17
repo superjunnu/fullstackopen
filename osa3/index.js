@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 3001;
 app.use(express.json());
 app.use(morgan("tiny"));
 app.use(cors());
+app.use(express.static("dist"));
 
 let persons = [
   {
@@ -33,13 +34,13 @@ let persons = [
 
 // Sovelluksen polku
 
-app.get("/", (request, response) => {
-  response.send(
-    // `Go to <a href="http://localhost:${PORT}/api/persons">http://localhost:${PORT}/api/persons</a>`
-    `Go to <a href="https://fullstackopen-6myz.onrender.com/info">Info</a><br>
-    Go to <a href="https://fullstackopen-6myz.onrender.com/api/persons">Persons</a>`
-  );
-});
+// app.get("/", (request, response) => {
+//   response.send(
+//     // `Go to <a href="http://localhost:${PORT}/api/persons">http://localhost:${PORT}/api/persons</a>`
+//     `Go to <a href="https://fullstackopen-6myz.onrender.com/info">Info</a><br>
+//     Go to <a href="https://fullstackopen-6myz.onrender.com/api/persons">Persons</a>`
+//   );
+// });
 
 // Hakee kaikki sen hetken henkilöt
 
@@ -130,5 +131,5 @@ app.post("/api/persons", (request, response) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}/api/persons`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
