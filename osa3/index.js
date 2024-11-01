@@ -71,7 +71,7 @@ app.use(express.static("dist"));
 // const generateId = () => {
 //   const randomId = Math.trunc(Math.random() * Date.now());
 
-//   const addId = persons.length > 0 ? randomId : 0;
+//   const addId = Person.length > 0 ? randomId : 0;
 //   return addId;
 // };
 
@@ -127,6 +127,30 @@ app.use(
 app.get("/api/persons", (request, response) => {
   Person.find({}).then((persons) => {
     response.json(persons);
+  });
+});
+
+// Lisää uuden henkilön jos tietyt ehdot täyttyvät
+
+app.post("/api/persons", (request, response) => {
+  const body = request.body;
+
+  if (!body.name) {
+    return response.status(400).json({ error: "Name missing" });
+  }
+  if (!body.number) {
+    return response.status(400).json({ error: "Number missing" });
+  }
+
+  // Uusi luotava henkilö olio
+
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  });
+
+  person.save().then((savedPerson) => {
+    response.json(savedPerson);
   });
 });
 
