@@ -79,6 +79,25 @@ app.post("/api/persons", (request, response, next) => {
     .catch((error) => next(error));
 });
 
+// Päivitetään olemassa oleva tieto
+
+app.put("/api/persons/:id", (request, response, next) => {
+  const id = request.params.id;
+  const number = request.body;
+
+  Person.findByIdAndUpdate(id, number, { new: true })
+    .then((updatedPerson) => {
+      if (updatedPerson) {
+        response.json(updatedPerson);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
+});
+
+// Poistetaan olemassa oleva tieto
+
 app.delete("/api/persons/:id", (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
     .then((result) => {
