@@ -38,13 +38,29 @@ app.use(
 //   }
 // });
 
-// Getting all persons
+// Haetaan kaikki henkilöt
 
 app.get("/api/persons", (request, response, next) => {
   Person.find({})
     .then((persons) => {
       if (persons) {
         response.json(persons);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
+});
+
+// Haetaan tietty henkilö
+
+app.get("/api/persons/:id", (request, response, next) => {
+  const id = request.params.id;
+
+  Person.findById(id)
+    .then((person) => {
+      if (person) {
+        response.json(person);
       } else {
         response.status(404).end();
       }
@@ -104,6 +120,19 @@ app.delete("/api/persons/:id", (request, response, next) => {
       response.status(204).end();
     })
     .catch((error) => next(error));
+});
+
+app.get("/info", (request, response, next) => {
+  const today = new Date();
+
+  Person.find().then((person) => {
+    response.send(
+      `
+      Phonebook has info for ${person.length} people
+      <br><br>
+      ${today}`
+    );
+  });
 });
 
 // Virheiden käsittelijä
