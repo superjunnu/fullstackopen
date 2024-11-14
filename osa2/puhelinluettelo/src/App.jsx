@@ -171,7 +171,10 @@ const App = () => {
           displayNotificationMessage(`Added ${newContact.name}`);
         })
         .catch((error) => {
-          console.log(error);
+          displayNotificationMessage(
+            `Information ${error.response.data.error}`
+          );
+          console.log(error.response.data);
         });
     }
   };
