@@ -22,8 +22,17 @@ test("blogs are returned as json", async () => {
 test("all blogs are returned", async () => {
   const response = await api.get("/api/blogs");
 
-  // expect(response.body).toHaveLength(helper.initialBlogs.length);
   assert.strictEqual(response.body.length, helper.initialBlogs.length);
+});
+
+test("should return blogs with right unique id", async () => {
+  const blogs = await helper.blogsInDb();
+
+  blogs.forEach((blog) => {
+    console.log(blog.id);
+
+    assert(blog.id);
+  });
 });
 
 after(async () => {
