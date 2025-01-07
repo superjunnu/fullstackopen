@@ -19,6 +19,8 @@ const totalLikes = (blogs) => {
 //   { title: "Blog 2", author: "Author 2", likes: 15 },
 //   { title: "Blog 3", author: "Author 3", likes: 10 },
 //   { title: "Blog 4", author: "Author 3", likes: 8 },
+//   { title: "Blog 5", author: "Author 1", likes: 8 },
+//   { title: "Blog 6", author: "Author 1", likes: 8 },
 // ];
 
 const favoriteBlog = (blogs) => {
@@ -32,8 +34,6 @@ const favoriteBlog = (blogs) => {
     likes: hasMostBlogLikes.likes,
   };
 };
-
-// console.log(favoriteBlog(blogs));
 
 const mostBlogs = (blogs) => {
   const author = (blog) => blog.author;
@@ -54,9 +54,30 @@ const mostBlogs = (blogs) => {
   };
 };
 
+const mostLikes = (blogs) => {
+  const groupedBlogs = lodash.groupBy(blogs, "author");
+
+  const countedAuthors = lodash.map(groupedBlogs, (arr) => {
+    return {
+      author: arr[0].author,
+      likes: lodash.sumBy(arr, "likes"),
+    };
+  });
+  const maxLikesAuthor = lodash.maxBy(countedAuthors, (a) => a.likes);
+  const authorName = lodash.head(lodash.values(maxLikesAuthor));
+
+  return {
+    author: authorName,
+    likes: maxLikesAuthor.likes,
+  };
+};
+
+// console.log(mostLikes(blogs));
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 };
