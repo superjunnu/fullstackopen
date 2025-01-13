@@ -78,6 +78,32 @@ test("new blog without likes property will be set to 0", async () => {
   assert(likeLikes.includes(0));
 });
 
+test("new blog without title property will not be added", async () => {
+  const newBlog = {
+    url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
+    author: "Robert C. Martin",
+  };
+
+  await api.post("/api/blogs").send(newBlog).expect(400);
+
+  const blogsAtEnd = await helper.blogsInDb();
+
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length);
+});
+
+test("new blog without url property will not be added", async () => {
+  const newBlog = {
+    title: "TDD harms architecture",
+    author: "Robert C. Martin",
+  };
+
+  await api.post("/api/blogs").send(newBlog).expect(400);
+
+  const blogsAtEnd = await helper.blogsInDb();
+
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
