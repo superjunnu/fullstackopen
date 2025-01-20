@@ -12,6 +12,18 @@ const User = require("../models/user");
 beforeEach(async () => {
   await Blog.deleteMany({});
   await Blog.insertMany(helper.initialBlogs);
+  await User.deleteMany({});
+  await User.insertMany([]);
+
+  const passwordHash = await bcrypt.hash("test", 10);
+  const user = new User({
+    username: "testi",
+    name: "testaaja",
+    blogs: [],
+    passwordHash,
+  });
+
+  await user.save();
 });
 
 describe("when there is some blogs saved", () => {
@@ -38,7 +50,14 @@ describe("viewing a specific blog", () => {
     });
   });
 
-  test("a valid blog can be added", async () => {
+  test("a valid blog can be added by authorized users", async () => {
+    const user = {
+      username: "testi",
+      password: "test",
+    };
+
+    const loginUser = await api.post("/api/login").send(user);
+
     const newBlog = {
       title: "Type wars",
       author: "Robert C. Martin",
@@ -49,6 +68,7 @@ describe("viewing a specific blog", () => {
     await api
       .post("/api/blogs")
       .send(newBlog)
+      .set("Authorization", `Bearer ${loginUser.body.token}`)
       .expect(201)
       .expect("Content-Type", /application\/json/);
 
@@ -61,7 +81,37 @@ describe("viewing a specific blog", () => {
     assert(titles.includes("Type wars"));
   });
 
+  test("a blog cannot be added by unauthorized users", async () => {
+    const newBlog = {
+      title: "Type wars",
+      author: "Robeaaart C. Martin",
+      url: "http://aaablog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+      likes: 200,
+    };
+
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(401)
+      .expect("Content-Type", /application\/json/);
+
+    const blogsAtEnd = await helper.blogsInDb();
+
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length);
+
+    const titles = blogsAtEnd.map((n) => n.title);
+
+    assert(!titles.includes("Type wars"));
+  });
+
   test("new blog without likes property will be set to 0", async () => {
+    const user = {
+      username: "testi",
+      password: "test",
+    };
+
+    const loginUser = await api.post("/api/login").send(user);
+
     const newBlog = {
       title: "TDD harms architecture",
       author: "Robert C. Martin",
@@ -72,6 +122,7 @@ describe("viewing a specific blog", () => {
       .post("/api/blogs")
       .send(newBlog)
       .expect(201)
+      .set("Authorization", `Bearer ${loginUser.body.token}`)
       .expect("Content-Type", /application\/json/);
 
     const blogsAtEnd = await helper.blogsInDb();
@@ -84,12 +135,23 @@ describe("viewing a specific blog", () => {
   });
 
   test("new blog without title property will not be added", async () => {
+    const user = {
+      username: "testi",
+      password: "test",
+    };
+
+    const loginUser = await api.post("/api/login").send(user);
+
     const newBlog = {
       url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
       author: "Robert C. Martin",
     };
 
-    await api.post("/api/blogs").send(newBlog).expect(400);
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(400)
+      .set("Authorization", `Bearer ${loginUser.body.token}`);
 
     const blogsAtEnd = await helper.blogsInDb();
 
@@ -97,12 +159,23 @@ describe("viewing a specific blog", () => {
   });
 
   test("new blog without url property will not be added", async () => {
+    const user = {
+      username: "testi",
+      password: "test",
+    };
+
+    const loginUser = await api.post("/api/login").send(user);
+
     const newBlog = {
       title: "TDD harms architecture",
       author: "Robert C. Martin",
     };
 
-    await api.post("/api/blogs").send(newBlog).expect(400);
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(400)
+      .set("Authorization", `Bearer ${loginUser.body.token}`);
 
     const blogsAtEnd = await helper.blogsInDb();
 
@@ -112,18 +185,38 @@ describe("viewing a specific blog", () => {
 
 describe("delete a blog", () => {
   test("a blog can be deleted", async () => {
-    const blogsAtStart = await helper.blogsInDb();
-    const blogToDelete = blogsAtStart[0];
+    const user = {
+      username: "testi",
+      password: "test",
+    };
 
-    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+    const newBlog = {
+      title: "Type wars",
+      author: "Robert C. Martin",
+      url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+      likes: 2,
+    };
+
+    const loginUser = await api.post("/api/login").send(user);
+
+    const blogsAtStart = await helper.blogsInDb();
+
+    const response = await api
+      .post("/api/blogs")
+      .set("authorization", `Bearer ${loginUser.body.token}`)
+      .send(newBlog);
+
+    const blogsAfterAddition = await helper.blogsInDb();
+
+    await api
+      .delete(`/api/blogs/${response.body.id}`)
+      .set("Authorization", `Bearer ${loginUser.body.token}`)
+      .expect(204);
 
     const blogsAtEnd = await helper.blogsInDb();
 
-    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1);
-
-    const titles = blogsAtEnd.map((r) => r.title);
-
-    assert(!titles.includes(blogToDelete.title));
+    assert.strictEqual(blogsAfterAddition.length, blogsAtStart.length + 1);
+    assert.strictEqual(blogsAtEnd.length, blogsAfterAddition.length - 1);
   });
 });
 
