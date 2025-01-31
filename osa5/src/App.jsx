@@ -13,6 +13,7 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [changeMessage, setChangeMessage] = useState(null);
+  const blogFormRef = useRef();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -59,8 +60,6 @@ const App = () => {
     window.localStorage.clear();
     setUser(null);
   };
-
-  const blogFormRef = useRef();
 
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility();
@@ -115,7 +114,7 @@ const App = () => {
           logout
         </button>
       </p>
-      <Togglable buttonLabel="create" ref={blogFormRef}>
+      <Togglable buttonLabel="create blog" ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
       </Togglable>
       {blogs.map((blog) => (
