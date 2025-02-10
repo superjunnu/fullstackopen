@@ -13,11 +13,12 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [changeMessage, setChangeMessage] = useState(null);
+  const [refreshBlog, setRefreshBlog] = useState(false);
   const blogFormRef = useRef();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
+  }, [refreshBlog]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBloglistUser");
@@ -68,6 +69,7 @@ const App = () => {
       setChangeMessage(
         `a new blog ${blogObject.title} by ${blogObject.author} added`
       );
+      setRefreshBlog(!refreshBlog);
       setTimeout(() => {
         setChangeMessage(null);
       }, 5000);
